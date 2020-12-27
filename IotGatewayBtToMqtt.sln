@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IotGatewayBtToMqtt", "IotGatewayBtToMqtt\IotGatewayBtToMqtt.csproj", "{52AEDA98-DC87-4D2E-BA5C-0E0BD8A259DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{52AEDA98-DC87-4D2E-BA5C-0E0BD8A259DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52AEDA98-DC87-4D2E-BA5C-0E0BD8A259DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52AEDA98-DC87-4D2E-BA5C-0E0BD8A259DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52AEDA98-DC87-4D2E-BA5C-0E0BD8A259DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9E7D7DCA-C0CE-41A7-81A8-3B2E933317EF}
+	EndGlobalSection
+EndGlobal
