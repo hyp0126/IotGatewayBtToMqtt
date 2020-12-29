@@ -12,11 +12,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
+using System.Management;
 
 // References:
 // https://docs.microsoft.com/en-us/dotnet/api/system.io.ports.serialport?view=dotnet-plat-ext-5.0
 // https://www.nuget.org/packages/M2Mqtt/
 // https://m2mqtt.wordpress.com/m2mqtt_doc/
+// https://ourcodeworld.com/articles/read/335/how-to-retrieve-the-cpu-s-temperature-with-c-in-winforms
 
 namespace IotGatewayBtToMqtt
 {
@@ -25,7 +27,11 @@ namespace IotGatewayBtToMqtt
         static SerialPort serialPort;
         MqttClient client;
         string clientId;
-        const string MQTT_BROKER_ADDRESS = "192.168.2.62";
+        //const string MQTT_BROKER_ADDRESS = "192.168.2.26";
+
+        // Create tmp variables to store values during the query
+        Double temperature = 0;
+        String instanceName = "";
 
         public GatewayForm()
         {
@@ -43,7 +49,8 @@ namespace IotGatewayBtToMqtt
             }
 
             // create client instance
-            client = new MqttClient(IPAddress.Parse(MQTT_BROKER_ADDRESS));
+            //client = new MqttClient(IPAddress.Parse(MQTT_BROKER_ADDRESS));
+            client = new MqttClient(Credential.MQTT_SERVER);
             clientId = Guid.NewGuid().ToString();
         }
 
@@ -84,6 +91,30 @@ namespace IotGatewayBtToMqtt
                 // scroll it automatically
                 txtOutput.ScrollToCaret();
             }));
+
+            // Query the MSAcpi_ThermalZoneTemperature API
+            // Note: run your app or Visual Studio (while programming) or you will get "Access Denied"
+            // Run as an administrator
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM MSAcpi_ThermalZoneTemperature");
+
+            foreach (ManagementObject obj in searcher.Get())
+            {
+                temperature = Convert.ToDouble(obj["CurrentTemperature"].ToString());
+                // Convert the value to celsius degrees
+                temperature = (temperature - 2732) / 10.0;
+                instanceName = obj["InstanceName"].ToString();
+            }
+
+            topic = "home/gateway/cputemp";
+            client.Publish(topic, Encoding.UTF8.GetBytes(temperature.ToString()));
+            txtOutput.Invoke(new MethodInvoker(delegate ()
+            {
+                txtOutput.Text += topic + "/" + temperature.ToString();
+                // set the current caret position to the end
+                txtOutput.SelectionStart = txtInput.Text.Length;
+                // scroll it automatically
+                txtOutput.ScrollToCaret();
+            }));
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -107,7 +138,7 @@ namespace IotGatewayBtToMqtt
 
                 serialPort.Open();
 
-                client.Connect(clientId);
+                client.Connect(clientId, Credential.MQTT_USER, Credential.MQTT_PASSWD);
             }
         }
 
